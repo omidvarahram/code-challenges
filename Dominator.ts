@@ -25,24 +25,24 @@ Write an efficient algorithm for the following assumptions:
 N is an integer within the range [0..100,000];
 each element of array A is an integer within the range [−2,147,483,648..2,147,483,647]. */
 
+// you can write to stdout for debugging purposes, e.g.
+// console.log('this is a debug message');
+
 function solution(A: number[]): number {
-    let size = 0, value = 0;
-    for (let num of A) {
-        if (size === 0) {
-            value = num;
-            size = 1;
-        } else {
-            size += (value === num) ? 1 : -1;
-        }
+    if(A.length === 1) return 0
+    const half = A.length / 2;
+    const mappedA = new Map<number, number[]>();
+
+    for(let i=0;i<A.length;i++) {
+       if(mappedA.has(A[i])) {
+           let occ = mappedA.get(A[i]);
+           occ.push(i)
+           if(occ.length > half) return i
+           mappedA.set(A[i], occ);
+       } else {
+           mappedA.set(A[i], [i])
+       }
     }
 
-    let count = 0, index = -1;
-    for (let i = 0; i < A.length; i++) {
-        if (A[i] === value) {
-            count++;
-            index = i;
-        }
-    }
-
-    return count > A.length / 2 ? index : -1;
+    return -1
 }
