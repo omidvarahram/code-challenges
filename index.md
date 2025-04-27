@@ -22,3 +22,4 @@
 20. [Binary Search on Answer](./context/20-binary-search-on-answer/binary-search-on-answer.md)
 21. [Union-Find (Disjoint Set Union)](./context/21-union-find/union-find.md)
 22. [Bit Manipulation](./context/22-bit-manipulation/bit-manipulation.md)
+23. [Optional topics](./context/23-optional-topics/23-optional-topics.md)
