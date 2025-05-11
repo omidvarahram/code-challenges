@@ -118,67 +118,97 @@ Count how many adjacent sensor pairs (including last→first) exceed a threshold
 ✅ Same scanning logic, with or without overlap rules
 
 ---
-
-## Problem 3 — Maximum Rectangle Side from Two Sticks
+## Problem 3 — Maximum Rectangle Side from Two Separate Sticks
 
 ### Context:
-Given two wooden sticks of length `a` and `b`, and you can cut them.  
-Find the **maximum possible side length** `L` for a **square** (i.e., 4 sides of length `L` total).
+You're given two wooden sticks of lengths `a` and `b`.  
+You can cut each stick into smaller equal-length segments, but:
+
+- **You cannot mix segments** from both sticks to form a single side.
+- You must use **4 sides** to form a valid rectangle.
+- Each side of the rectangle must come **entirely** from one stick.
+- Valid groupings include:
+  - 2 sides from `a` and 2 from `b`
+  - All 4 sides from `a`
+  - All 4 sides from `b`
+
+Your goal is to find the **maximum possible side length `L`** such that a valid rectangle can be formed.
+
+---
 
 ### Approach:
-Use binary search on answer. Greedily check for how many pieces of length `L` can be made from both sticks.
+- Try all possible lengths `L` from `1` to `min(a, b)`
+- For each length:
+  - Count how many pieces of length `L` can be made from each stick
+  - Check if you can form:
+    - 2 sides from each stick (2 + 2)
+    - or 4 sides from one stick
+- Track the largest valid `L`
+
+---
 
 ### Solution:
 
 ```typescript
-function maxLengthOfSide(a: number, b: number): number {
-  let left = 1, right = Math.max(a, b);
-  let answer = 0;
+function maxRectangleLength(a: number, b: number): number {
+  let maxLen = 0;
 
-  function canMake(length: number): boolean {
-    return Math.floor(a / length) + Math.floor(b / length) >= 4;
-  }
+  for (let L = 1; L <= Math.min(a, b); L++) {
+    const countA = Math.floor(a / L);
+    const countB = Math.floor(b / L);
 
-  while (left <= right) {
-    const mid = Math.floor((left + right) / 2);
-    if (canMake(mid)) {
-      answer = mid;
-      left = mid + 1;
-    } else {
-      right = mid - 1;
+    const canMake =
+      (countA >= 2 && countB >= 2) || // 2 sides from each
+      countA >= 4 ||                  // all from A
+      countB >= 4;                    // all from B
+
+    if (canMake) {
+      maxLen = L;
     }
   }
 
-  return answer;
+  return maxLen;
 }
 ```
+
+---
 
 ### Examples:
 
 ```typescript
-maxLengthOfSide(9, 3) // → 3
-maxLengthOfSide(5, 3) // → 2
-maxLengthOfSide(8, 8) // → 4
+maxRectangleLength(10, 6) // → 3
+// A: 10/3 = 3, B: 6/3 = 2 → 2 sides each → ✅
+
+maxRectangleLength(9, 3) // → 2
+// A: 9/2 = 4 → can make 4 from A → ✅
+
+maxRectangleLength(5, 5) // → 2
+// A: 5/2 = 2, B: 5/2 = 2 → 2 + 2 → ✅
+
+maxRectangleLength(7, 1) // → 1
+// A: 7, B: 1 → at least 2 + 2 pieces → ✅
 ```
 
 ---
 
-### Similar Problem 1 — Cable Equal Cut
+### Similar Problem 1 — Cable Cut for Two Machines
 
-Given two cables, what's the max length `L` you can cut to make **exactly 4 equal segments**?
+You have two cable reels. You must cut identical-length segments but each segment must power one device only.  
+Find the max segment length to power 4 devices total.
 
-✅ Same solution: binary search on length, greedy check for # of pieces
-
----
-
-### Similar Problem 2 — Rope Fence Construction
-
-You have two ropes and want to cut them into equal pieces to form a 4-side fenced square.  
-Maximize side length.
-
-✅ Same as original in different wording
+✅ Same structure: binary search over length, no mixing between sources.
 
 ---
+
+### Similar Problem 2 — Pipe Construction from Two Sources
+
+Two pipes (`a`, `b`) can be cut to form the four sides of a square garden bed.  
+No mixing materials per side is allowed.  
+Find the max side length possible.
+
+✅ Identical constraints and solution.
+
+
 
 ## Problem 4 — Game Level Difficulty Scheduling
 
