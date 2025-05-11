@@ -1,5 +1,3 @@
----
-
 ## Problem 1 — Cycle Pointer Jumps
 
 ### Context:
