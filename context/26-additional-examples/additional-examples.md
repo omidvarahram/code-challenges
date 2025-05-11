@@ -117,98 +117,80 @@ Count how many adjacent sensor pairs (including last→first) exceed a threshold
 
 ✅ Same scanning logic, with or without overlap rules
 
----
-## Problem 3 — Maximum Rectangle Side from Two Separate Sticks
+---## Problem 3 — Maximum Square Side from Two Sticks (No Mixing Per Side)
 
 ### Context:
 You're given two wooden sticks of lengths `a` and `b`.  
 You can cut each stick into smaller equal-length segments, but:
 
-- **You cannot mix segments** from both sticks to form a single side.
-- You must use **4 sides** to form a valid rectangle.
-- Each side of the rectangle must come **entirely** from one stick.
-- Valid groupings include:
-  - 2 sides from `a` and 2 from `b`
-  - All 4 sides from `a`
-  - All 4 sides from `b`
-
-Your goal is to find the **maximum possible side length `L`** such that a valid rectangle can be formed.
+- Each side of the square must be made from **exactly one stick** (no mixing a and b together for a single side).
+- You may use any combination of cuts from both sticks to form the sides — e.g., 3 from `a` and 1 from `b` is valid.
+- Your task is to find the **maximum possible side length `L`** such that you can form **exactly 4 sides** of length `L`.
 
 ---
 
 ### Approach:
-- Try all possible lengths `L` from `1` to `min(a, b)`
+- Loop over all possible side lengths `L` from `1` to `min(a, b)`
 - For each length:
-  - Count how many pieces of length `L` can be made from each stick
-  - Check if you can form:
-    - 2 sides from each stick (2 + 2)
-    - or 4 sides from one stick
-- Track the largest valid `L`
+  - Count how many pieces of length `L` you can get from each stick
+  - If `countA + countB >= 4`, it's possible to make a square of side `L`
+- Track the maximum such valid `L`
 
 ---
 
 ### Solution:
 
-```typescript
-function maxRectangleLength(a: number, b: number): number {
+!!!!typescript
+function maxSquareSideLength(a: number, b: number): number {
   let maxLen = 0;
 
   for (let L = 1; L <= Math.min(a, b); L++) {
     const countA = Math.floor(a / L);
     const countB = Math.floor(b / L);
 
-    const canMake =
-      (countA >= 2 && countB >= 2) || // 2 sides from each
-      countA >= 4 ||                  // all from A
-      countB >= 4;                    // all from B
-
-    if (canMake) {
+    if (countA + countB >= 4) {
       maxLen = L;
     }
   }
 
   return maxLen;
 }
-```
+!!!!
 
 ---
 
 ### Examples:
 
-```typescript
-maxRectangleLength(10, 6) // → 3
-// A: 10/3 = 3, B: 6/3 = 2 → 2 sides each → ✅
+!!!!typescript
+maxSquareSideLength(9, 3) // → 3
+// A: 3 pieces of 3, B: 1 → total 4 → valid ✅
 
-maxRectangleLength(9, 3) // → 2
-// A: 9/2 = 4 → can make 4 from A → ✅
+maxSquareSideLength(5, 5) // → 2
+// A: 2, B: 2 → total 4 → valid ✅
 
-maxRectangleLength(5, 5) // → 2
-// A: 5/2 = 2, B: 5/2 = 2 → 2 + 2 → ✅
+maxSquareSideLength(10, 6) // → 4
+// A: 2, B: 1 → total 3 → invalid, but L=3 gives total 5 → valid ✅
 
-maxRectangleLength(7, 1) // → 1
-// A: 7, B: 1 → at least 2 + 2 pieces → ✅
-```
-
----
-
-### Similar Problem 1 — Cable Cut for Two Machines
-
-You have two cable reels. You must cut identical-length segments but each segment must power one device only.  
-Find the max segment length to power 4 devices total.
-
-✅ Same structure: binary search over length, no mixing between sources.
+maxSquareSideLength(4, 4) // → 2
+// A: 2, B: 2 → total 4 → valid ✅
+!!!!
 
 ---
 
-### Similar Problem 2 — Pipe Construction from Two Sources
+### Similar Problem 1 — Equal Cable Segments for Square Fence
 
-Two pipes (`a`, `b`) can be cut to form the four sides of a square garden bed.  
-No mixing materials per side is allowed.  
-Find the max side length possible.
+You have two cable rolls and want to form a square fence.  
+You can cut both, but each segment must come from one roll.  
+Maximize side length.  
+✅ Same problem, different setting.
 
-✅ Identical constraints and solution.
+---
 
+### Similar Problem 2 — Square Frame from Two Rods
 
+You have two metal rods. Cut them to form a square frame.  
+You can’t weld mixed pieces, but you can use any combination of full cuts.  
+✅ Same logic applies.
 
 ## Problem 4 — Game Level Difficulty Scheduling
 
