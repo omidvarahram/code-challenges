@@ -251,3 +251,72 @@ Find the smallest such `X`.
 Given file sizes and number of disks `K`, partition files (in order) so that the **max storage per disk** is minimized.
 
 ✅ Same algorithm, different context
+
+---
+## Problem 5 — Grouping People by Room Tolerance
+
+### Context:
+You are given an array `A` of length `N`, where each element `A[i]` represents a person's **maximum acceptable group size** (including themselves).  
+Your task is to assign people into the **minimum number of rooms**, such that:
+- Each room has exactly `k` people.
+- Every person in a room must be okay being in a group of size `k` or less (i.e., their value `A[i] ≥ k`).
+
+Each person must be assigned to **exactly one** room.
+
+---
+
+### Approach:
+- **Sort the array** in ascending order.
+- Traverse left to right, and build groups greedily:
+  - Start a group
+  - Keep adding people to it
+  - Once the group size matches the tolerance of the last person added, close the group and start a new one
+
+---
+
+### Solution:
+
+```typescript
+function minRooms(A: number[]): number {
+  A.sort((a, b) => a - b);
+  let rooms = 0;
+  let size = 0;
+
+  for (let i = 0; i < A.length; i++) {
+    size++;
+    if (size === A[i]) {
+      rooms++;
+      size = 0;
+    }
+  }
+
+  return rooms;
+}
+```
+
+---
+
+### Examples:
+
+```typescript
+minRooms([2, 3, 1, 2, 2]) // → 2
+minRooms([1, 1, 1, 1])    // → 4
+minRooms([2, 2, 2, 2])    // → 2
+```
+
+---
+
+### Similar Problem 1 — Taxi Sharing
+
+Each passenger gives a number: max people they're willing to share a taxi with (including themselves).  
+Minimize the number of taxis required.  
+✅ Same logic applies.
+
+---
+
+### Similar Problem 2 — Team Formation for a Game
+
+Each player says the max number of players they want on a team.  
+Form teams such that every member is okay with the team size.  
+✅ Identical greedy grouping structure.
+
