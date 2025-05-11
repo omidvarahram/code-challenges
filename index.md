@@ -25,3 +25,4 @@
 23. [Optional Topics (RMQ, Monotonic Structures, Greedy + BS Hybrid)](./context/23-optional-topics/23-optional-topics.md)  
 24. [Two Pointers](./context/24-two-pointers/two-pointers.md)  
 25. [Stack — Bracket Matching and Nesting](./context/25-stack-bracket-matching/stack-bracket-matching.md)
+26. [Additional Examples](./context/26-additional-examples/additional-examples.md)
