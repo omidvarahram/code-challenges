@@ -140,7 +140,7 @@ You can cut each stick into smaller equal-length segments, but:
 
 ### Solution:
 
-!!!!typescript
+```typescript
 function maxSquareSideLength(a: number, b: number): number {
   let maxLen = 0;
 
@@ -155,13 +155,13 @@ function maxSquareSideLength(a: number, b: number): number {
 
   return maxLen;
 }
-!!!!
+```
 
 ---
 
 ### Examples:
 
-!!!!typescript
+```typescript
 maxSquareSideLength(9, 3) // → 3
 // A: 3 pieces of 3, B: 1 → total 4 → valid ✅
 
@@ -173,7 +173,7 @@ maxSquareSideLength(10, 6) // → 4
 
 maxSquareSideLength(4, 4) // → 2
 // A: 2, B: 2 → total 4 → valid ✅
-!!!!
+```
 
 ---
 
