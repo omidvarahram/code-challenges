@@ -143,3 +143,30 @@ Loop:
 
 This solution is optimal within given constraints.
 
+**Alternative solution:**
+```ts
+function solution(S: string[]): number[] {
+  const N = S.length;
+  if (N === 0) return [];
+
+  const M = S[0].length;
+  const flat = S.join('');
+  const seen = new Map<string, number>();
+
+  for (let i = 0; i < flat.length; i++) {
+    const char = flat[i];
+    const positionInArray = Math.floor(i / M); // which string
+    const positionInString = i % M;            // position inside string
+    const key = `${char}@${positionInString}`;
+
+    if (seen.has(key)) {
+      const prevIndex = seen.get(key)!;
+      return [prevIndex, positionInArray, positionInString];
+    }
+
+    seen.set(key, positionInArray);
+  }
+
+  return [];
+}
+```
