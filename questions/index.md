@@ -28,7 +28,7 @@
 28. [BattleshipRecognition](./context/028-battleshipRecognition.md)  
 29. [SanatoriumAccommodation](./context/029-sanatoriumAccommodation.md)  
 30. [FixTheTable](./context/030-fixTheTable.md)  
-31. [XYSplit](./context/031-xySplit.md)  
+31. [XYSplit](./context/031-xySplit.md)  ✅
 32. [EqualSegments](./context/032-equalSegments.md)  
 33. [FreeingStorageSpace](./context/033-freeingStorageSpace.md)  
 34. [GardenArrangement](./context/034-gardenArrangement.md)  

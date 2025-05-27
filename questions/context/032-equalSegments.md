@@ -39,3 +39,58 @@ that, given an array A of N integers, returns the maximum number of segments wit
 
 - N is an integer within the range [2..100,000];
 - each element of array A is an integer within the range [0..1,000,000,000].
+
+---
+## EqualSegments
+
+**Step-by-Step Explanation**
+
+### Step 1: Understand the Problem  
+We have an array `A` of length `N`. We want to select as many **non-overlapping** subarrays of length 2 (i.e. adjacent pairs `(A[i], A[i+1])`) as possible, **all** having the **same** sum.
+
+### Step 2: Strategy  
+1. **Compute each pair’s sum** for all `i = 0..N-2`.  
+2. **Group** the start-indices `i` by their sum `s = A[i] + A[i+1]`.  
+3. For each group of indices with the same sum, **greedily** pick as many non-overlapping segments as possible:
+   - Keep a variable `lastEnd = -1`.
+   - Iterate the sorted list of start-indices `i`.
+   - If `i > lastEnd`, select this segment `(i, i+1)`, increment a counter, and set `lastEnd = i+1`.
+4. The answer is the **maximum** count among all sums.
+
+This runs in **O(N)** time and space:  
+- We make one pass to build the groups,  
+- then one pass over all groups to count greedily.
+
+---
+
+```ts
+function solution(A: number[]): number {
+  const N = A.length;
+  if (N < 2) return 0;
+
+  // 1) Group start-indices by the sum of A[i]+A[i+1]
+  const groups = new Map<number, number[]>();
+  for (let i = 0; i < N - 1; i++) {
+    const sum = A[i] + A[i + 1];
+    if (!groups.has(sum)) groups.set(sum, []);
+    groups.get(sum)!.push(i);
+  }
+
+  // 2) For each sum-group, greedily count non-overlapping segments
+  let best = 0;
+  for (const indices of groups.values()) {
+    let count = 0;
+    let lastEnd = -1;
+    // indices are in ascending order by construction
+    for (const start of indices) {
+      if (start > lastEnd) {
+        count++;
+        lastEnd = start + 1;  // segment covers [start, start+1]
+      }
+    }
+    best = Math.max(best, count);
+  }
+
+  return best;
+}
+```
