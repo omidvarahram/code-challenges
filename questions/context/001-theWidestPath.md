@@ -73,7 +73,8 @@ Only the **X coordinates** matter for a **vertical** path. The widest space is t
 
 ### Step 3: TypeScript Code
 
-```ts
+
+```ts copy
 function solution(X: number[], Y: number[]): number {
   // Step 1: Remove duplicate Xs
   const uniqueX = Array.from(new Set(X));

@@ -105,7 +105,7 @@ Rules:
 
 ### Step 3: TypeScript Code
 
-```ts
+```ts copy
 function solution(A: number[], D: string[]): number {
   let balance = 0;
 
