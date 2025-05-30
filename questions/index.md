@@ -37,9 +37,9 @@
 37. [LongestTwoDigitFragment](./context/037-longestTwoDigitFragment.md)  
 38. [MinDistinct](./context/038-minDistinct.md)  
 39. [NoEqualDigits](./context/039-noEqualDigits.md)  
-40. [PathDetection](./context/040-pathDetection.md)  
-41. [PriceFluctuation](./context/041-priceFluctuation.md)  
-42. [Sticks](./context/042-sticks.md)  
+40. [PathDetection](./context/040-pathDetection.md)  ✅
+41. [PriceFluctuation](./context/041-priceFluctuation.md)  ✅
+42. [Sticks](./context/042-sticks.md)  ✅
 43. [AngryFrogs](./context/043-angryFrogs.md)  
 44. [AssassinsStealth](./context/044-assassinsStealth.md)  
 45. [ChoosingNumbers](./context/045-choosingNumbers.md)  
