@@ -1,99 +1,142 @@
 # FinancialPlan
 
-**Hard**
-60 min
-Given a list of financial transactions for the next twelve months, find the minimum possible maximum debt at any time of the year and the total amount needed at the start.
+**Hard**  
+**60 min**  
+How many expenses must be rescheduled to the end of the year so that the company doesn’t fall into debt?
 
 ---
 
 ## Task description
 
-A long-term financial plan is a list of expected revenues and payments for the upcoming year, distributed as monthly values. Each element represents the net outcome at a time for one of the twelve months (positive means incoming, negative means outgoing). If the company starts with 0 funds, it would put the company in debt. You must determine both the minimum possible maximum debt (the least negative cash balance at any time) and the minimum total sum needed at the start to avoid any debts (the smallest amount to ensure the account never goes negative).
+A company has a list of expected revenues and payments for the upcoming year in chronological order. The problem is that at some moments in time the sum of previous payments can be larger than the total previous revenue. This would put the company in debt. To avoid this problem the company takes a very simple approach. It reschedules some expenses to the end of the year.
 
-You are given an array A of N integers, where positive numbers represent revenues and negative numbers represent payments. You can reorder the sequence of monthly values to minimize the largest single debt at any time. You can also inject an initial amount of cash at the start to prevent the balance from going below zero at any time.
+You are given an array of integers, where positive numbers represent revenues and negative numbers represent expenses, all in chronological order. In one move you can relocate any negative number (an expense) to the end of the array. What is the minimum number of such relocations to make sure that the company never falls into debt? In other words, you need to make sure that there is no consecutive sequence of elements starting from the beginning of the array, that sums up to a negative number.
+
+You can assume that the sum of all elements in A is nonnegative.
 
 Write a function:
 
+```typescript
 function solution(A);
+```
 
-that, given an array A of N integers, returns the minimum number x, where x is the minimum total sum the company must ensure at the start.
+that, given an array A of N integers, returns the minimum number of relocations so that the company never falls into debt.
 
 ### Examples
 
-1. Given A = \[10, -20, 10, 10], the function should return 10. It is enough to move 10 such cash units at the start.
-2. Given A = \[10, -30, 20, -10], the function should return 10. The proposed schedule is: the beginning cash can be reduced to the required debt in the third month.
-3. Given A = \[5, 10, -15], the function should return 0. The company balances cashflow.
+1. Given A = [10, -10, -1, 10], the function should return 1. It is enough to move -10 to the end of the array.
 
-Write an efficient algorithm for the following assumptions:
+2. Given A = [-1, -1, 1, 1, 1, 1], the function should return 2. The negative elements at the beginning must be moved to the end to avoid debt at the start of the year.
 
-* N is an integer within the range \[1..1,000,000];
-* each element of array A is an integer within the range \[−1,000,000,000..1,000,000,000];
-* sum of all elements in A is greater than or equal to 0.
-
+3. Given A = [5, -2, 3, -1], the function should return 0. The company balance is always nonnegative.
 
 ---
 
+Write an efficient algorithm for the following assumptions:
+
+- N is an integer within the range [1..100,000];
+- Each element of array A is an integer within the range [-1,000,000,000..1,000,000,000];
+- Sum of all elements in A is greater than or equal to 0.
+
+
 1. **Restating the problem**
-   You have a sequence of monthly net cash‐flows `A` (positive = income, negative = expense).  You may choose an initial cash balance `x ≥ 0` at month 0 so that when you add each month’s net flow in order, your balance never goes below zero.  Compute the smallest such `x`.
+   You have an array of revenues and expenses (`A`). At any time, the sum of the array from the start up to that point (prefix sum) must never go below zero. You may “reschedule” (move to the end) any negative number (expense) to avoid going negative. What’s the **minimum number** of moves needed to guarantee you never go into debt at any point?
 
 2. **Important points**
 
-   * You **cannot** go negative at any intermediate month.
-   * You choose **one** nonnegative initial cash `x`.
-   * From month 1 to N you apply each `A[i]` in the given order.
-   * You want the **minimum** `x` that keeps every running balance ≥ 0.
+   * Only **negative numbers** can be moved, and each move places the element at the very end (order among moved elements doesn’t matter).
+   * You want to minimize the number of such moves.
+   * All prefix sums must be ≥ 0 after the moves.
+   * The sum of all values is guaranteed to be nonnegative, so there’s always a solution.
 
 3. **Algorithm type**
+   Greedy + min-heap (priority queue).
 
-   * **Prefix‐sum scan** (linear time, O(N)).
+4. **Step-by-step solution**
 
-4. **Step-by-step explanation**
-
-   1. Initialize `running = 0` and `minRunning = 0`.
-   2. For each month `i = 0…N-1`:
-
-      * Add `A[i]` to `running`.
-      * If `running < minRunning`, set `minRunning = running`.
-   3. At the end, `minRunning` is the most negative your balance would get if you started with zero.
-   4. You need `x = max(0, -minRunning)` to shift that lowest point up to zero.
+   * Iterate through the array, maintaining a running `prefixSum`.
+   * Each time you encounter a negative value, push it (as a positive value for max-heap or as is for min-heap) onto a heap of negative numbers included so far.
+   * If at any point `prefixSum` drops below zero, pop the **most negative** expense encountered so far and “remove” it from the prefix sum (simulating moving it to the end). Increment the relocation counter.
+   * Repeat until the prefix sum is nonnegative at every step.
 
 5. **TypeScript solution**
 
-   ```typescript
-   function solution(A: number[]): number {
-     let running = 0;
-     let minRunning = 0;
-     for (const v of A) {
-       running += v;
-       if (running < minRunning) {
-         minRunning = running;
+   ```ts copy
+   // Min-heap for negative expenses
+   class MinHeap {
+     private data: number[] = [];
+     push(x: number) {
+       this.data.push(x);
+       let i = this.data.length - 1;
+       while (i > 0) {
+         const p = (i - 1) >> 1;
+         if (this.data[p] <= this.data[i]) break;
+         [this.data[i], this.data[p]] = [this.data[p], this.data[i]];
+         i = p;
        }
      }
-     return -minRunning;  // since minRunning ≤ 0, and if minRunning = 0 returns 0
+     pop(): number {
+       const ret = this.data[0];
+       const last = this.data.pop()!;
+       if (this.data.length > 0) {
+         this.data[0] = last;
+         let i = 0, n = this.data.length;
+         while (true) {
+           let left = 2 * i + 1, right = 2 * i + 2, smallest = i;
+           if (left < n && this.data[left] < this.data[smallest]) smallest = left;
+           if (right < n && this.data[right] < this.data[smallest]) smallest = right;
+           if (smallest === i) break;
+           [this.data[i], this.data[smallest]] = [this.data[smallest], this.data[i]];
+           i = smallest;
+         }
+       }
+       return ret;
+     }
+     size() { return this.data.length; }
+   }
+
+   function solution(A: number[]): number {
+     let relocations = 0;
+     let prefixSum = 0;
+     const minHeap = new MinHeap();
+
+     for (let i = 0; i < A.length; i++) {
+       prefixSum += A[i];
+       if (A[i] < 0) {
+         minHeap.push(A[i]);
+       }
+       while (prefixSum < 0 && minHeap.size() > 0) {
+         // Remove the most negative expense
+         const minNeg = minHeap.pop();
+         prefixSum -= minNeg; // Remove its negative effect
+         relocations++;
+       }
+     }
+     return relocations;
    }
    ```
 
-6. **Given examples**
+6. **Covering the given examples**
 
-   * `A = [10, -20, 10, 10]`
+   * `[10, -10, -1, 10]`
 
-     * Prefix sums: 10, –10, 0, 10 → `minRunning = -10` → `x = 10`.
+     * prefix: 10, 0, -1 → needs one relocation
+   * `[-1, -1, 1, 1, 1, 1]`
 
-   * `A = [10, -30, 20, -10]`
+     * prefix: -1, -2 → needs two relocations
+   * `[5, -2, 3, -1]`
 
-     * Prefix sums: 10, –20, 0, –10 → `minRunning = -20` → `x = 20`
-       *(The statement’s “10” seems inconsistent with this scan.)*
-
-   * `A = [5, 10, -15]`
-
-     * Prefix sums: 5, 15, 0 → `minRunning = 0` → `x = 0`.
+     * prefix: 5, 3, 6, 5 → never negative, needs 0 relocations
 
 7. **Additional test cases**
 
-   | A                           | Expected | Notes                                           |
-   | --------------------------- | -------- | ----------------------------------------------- |
-   | `[]`                        | `0`      | No months → never goes negative.                |
-   | `[100, 200, 300]`           | `0`      | All positive incomes.                           |
-   | `[-5, -10, -3]`             | `18`     | Prefix: –5, –15, –18 → need 18 to stay ≥ 0.     |
-   | `[10, -5, -10, 20, -15]`    | `10`     | Prefix: 10,5,–5,15,0 → minRunning = –5 → x = 5. |
-   | Large N = 1e6, random A\[i] | —        | Runs in O(N) time and O(1) extra memory.        |
+   | A                                        | Output | Notes                                           |
+   | ---------------------------------------- | ------ | ----------------------------------------------- |
+   | `[1, 2, 3, 4, 5]`                        | 0      | All positive, no relocations needed             |
+   | `[-3, 3, -2, 2, -1, 1]`                  | 1      | Remove -3 from front for positive prefix sums   |
+   | `[-10, 10, -10, 10, -10, 10]`            | 2      | Remove two -10’s to avoid prefix going negative |
+   | `[-1, -2, -3, 6]`                        | 2      | Remove -1, -2 to avoid negative prefix sum      |
+   | `[0, 0, 0, 0]`                           | 0      | No expenses, nothing to move                    |
+   | `[1000000, -1000000, -1000000, 1000000]` | 1      | Large values, test performance                  |
+
+This greedy heap solution runs in O(N log N) time, suitable for N up to 100,000.
